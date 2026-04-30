@@ -1,0 +1,164 @@
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2等口述試験：完全対策</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #fafafa; margin: 0; padding: 10px; }
+
+        /* 切り替えボタンのスタイル */
+        .nav-menu { margin-bottom: 10px; display: flex; justify-content: center; gap: 5px; }
+        .nav-menu button { padding: 10px; cursor: pointer; border: none; border-radius: 5px; background: #ddd; }
+        .nav-menu button.active { background: #007bff; color: white; }
+
+        .container { position: relative; display: inline-block; width: 100%; max-width: 500px; background: #fff; border: 1px solid #ccc; }
+        img { width: 100%; height: auto; display: block; }
+
+        /* 点検ボタン（共通：モーターやフレームなど） */
+        .dot {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 165, 0, 0.5);
+            border: 2px solid orange;
+            border-radius: 50%;
+            display: none; /* 初期状態は非表示 */
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        /* 共通：完了時の色 */
+        .dot.active {
+            background-color: rgba(0, 255, 0, 0.7) !important;
+            border-color: green !important;
+        }
+
+        /* =========================================
+           プロペラ専用：ドーナツ型（SVG使用）の設定
+           ========================================= */
+        .dot.propeller {
+            width: 100px !important;
+            height: 100px !important;
+            background: transparent !important; /* 絶対に背景を塗らない */
+            border: none !important;            /* 枠線も消す */
+            pointer-events: none;               /* divの四角い判定を消す */
+            z-index: 20;                        /* モーターより上にする */
+        }
+
+        /* ★ここが原因でした！SVG全体（透明な四角）のバリアを消します */
+        .dot.propeller svg {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;               
+        }
+
+        /* ★ここが解決策！色のついたドーナツだけをクリック可能にします */
+        .dot.propeller svg path {
+            pointer-events: auto;               
+            cursor: pointer;
+        }
+
+        /* プロペラがクリックされた時、中のSVGを緑にする */
+        .dot.propeller.active svg path {
+            fill: rgba(0, 255, 0, 0.8) !important;
+        }
+
+        /* モードごとの表示制御 */
+        [data-mode="top"] .mode-top { display: block; }
+        [data-mode="bottom"] .mode-bottom { display: block; }
+        [data-mode="radio"] .mode-radio { display: block; }
+
+        #msg { margin-top: 15px; padding: 15px; background: #333; color: #fff; border-radius: 5px; min-height: 24px; font-weight: bold; }
+    </style>
+</head>
+<body data-mode="top">
+
+    <h3>2等点検シミュレーター</h3>
+
+    <div class="nav-menu">
+        <button id="btn-top" class="active" onclick="changeMode('top')">上面</button>
+        <button id="btn-bottom" onclick="changeMode('bottom')">下面</button>
+        <button id="btn-radio" onclick="changeMode('radio')">送信機</button>
+    </div>
+
+    <div class="container" id="main-container">
+        <!-- 拡張子はご指定の通り大文字の PNG にしています -->
+        <img src="drone_top.PNG" id="main-img"> 
+
+        <!-- =========================================
+             左上：モーターとプロペラ
+             ========================================= -->
+        <div class="dot mode-top" style="top: 25.5%; left: 10.5%;" onclick="show('左上モーター：異常なし。よし！', this)"></div>
+        <div class="dot mode-top propeller" style="top: 18%; left: 3%;" onclick="show('左上プロペラ：異常なし。よし！', this)">
+            <svg viewBox="0 0 100 100">
+                <path fill="rgba(255, 165, 0, 0.8)" fill-rule="evenodd" d="M50,0 A50,50 0 1,0 50,100 A50,50 0 1,0 50,0 Z M50,25 A25,25 0 1,1 50,75 A25,25 0 1,1 50,25 Z" />
+            </svg>
+        </div>
+
+        <!-- =========================================
+             右上：モーターとプロペラ
+             ========================================= -->
+        <div class="dot mode-top" style="top: 25.5%; left: 82.5%;" onclick="show('右上モーター：異常なし。よし！', this)"></div>
+        <div class="dot mode-top propeller" style="top: 18%; left: 75%;" onclick="show('右上プロペラ：異常なし。よし！', this)">
+            <svg viewBox="0 0 100 100">
+                <path fill="rgba(255, 165, 0, 0.8)" fill-rule="evenodd" d="M50,0 A50,50 0 1,0 50,100 A50,50 0 1,0 50,0 Z M50,25 A25,25 0 1,1 50,75 A25,25 0 1,1 50,25 Z" />
+            </svg>
+        </div>
+
+        <!-- =========================================
+             左下：モーターとプロペラ
+             ========================================= -->
+        <div class="dot mode-top" style="top: 66.5%; left: 16.5%;" onclick="show('左下モーター：異常なし。よし！', this)"></div>
+        <div class="dot mode-top propeller" style="top: 59%; left: 9%;" onclick="show('左下プロペラ：異常なし。よし！', this)">
+            <svg viewBox="0 0 100 100">
+                <path fill="rgba(255, 165, 0, 0.8)" fill-rule="evenodd" d="M50,0 A50,50 0 1,0 50,100 A50,50 0 1,0 50,0 Z M50,25 A25,25 0 1,1 50,75 A25,25 0 1,1 50,25 Z" />
+            </svg>
+        </div>
+
+        <!-- =========================================
+             右下：モーターとプロペラ
+             ========================================= -->
+        <div class="dot mode-top" style="top: 66.5%; left: 76.5%;" onclick="show('右下モーター：異常なし。よし！', this)"></div>
+        <div class="dot mode-top propeller" style="top: 59%; left: 69%;" onclick="show('右下プロペラ：異常なし。よし！', this)">
+            <svg viewBox="0 0 100 100">
+                <path fill="rgba(255, 165, 0, 0.8)" fill-rule="evenodd" d="M50,0 A50,50 0 1,0 50,100 A50,50 0 1,0 50,0 Z M50,25 A25,25 0 1,1 50,75 A25,25 0 1,1 50,25 Z" />
+            </svg>
+        </div>
+
+        <!-- その他の点検項目 -->
+        <div class="dot mode-top" style="top: 24%; left: 38%;" onclick="show('左上フレーム：異常なし。よし！', this)"></div>
+        <div class="dot mode-top" style="top: 24%; left: 62%;" onclick="show('右上フレーム：異常なし。よし！', this)"></div>
+        <div class="dot mode-top" style="top: 45%; left: 35%;" onclick="show('左下フレーム：異常なし。よし！', this)"></div>
+        <div class="dot mode-top" style="top: 45%; left: 65%;" onclick="show('右下フレーム：異常なし。よし！', this)"></div>
+        <div class="dot mode-top" style="top: 48%; left: 50%;" onclick="show('識別番号：表示よし！', this)"></div>
+
+    </div>
+
+    <div id="msg">モードを選んで点検開始</div>
+
+    <script>
+        function changeMode(mode) {
+            document.body.setAttribute('data-mode', mode);
+            const img = document.getElementById('main-img');
+            img.src = 'drone_' + mode + '.PNG';
+
+            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + mode).classList.add('active');
+
+            document.getElementById('msg').innerText = mode + "の点検準備完了";
+        }
+
+        function show(text, element) {
+            document.getElementById('msg').innerText = text;
+            element.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+index_final.html
+「index_final.html」を表示しています。
